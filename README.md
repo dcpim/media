@@ -1,2 +1,26 @@
-# media
-Media manager and downloader for DCPIM
+# Media manager and downloader for DCPIM
+
+This is the media manager for DCPIM. It includes the following features:
+
+* Manage audio (MP3) library.
+* Manage video (MP4) library.
+* Upload local files as video or audio.
+* Import files from external streaming source (ie. YouTube) as video or audio.
+
+
+# Authors
+
+This code was created by:
+Patrick Lambert <patrick@dendory.ca>
+
+
+# License
+
+Copyright 2023, Patrick Lambert
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
