@@ -16,6 +16,7 @@ print(dcpim.db_get(TABLE))
 
 
 # Run tests
+print(dcpim.curl("http://127.0.0.1/library?token={}".format(TOKEN)))
 
 
 # Delete session
