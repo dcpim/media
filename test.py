@@ -1,7 +1,6 @@
 """Run tests for DCPIM media."""
 
 import dcpim
-import boto3
 
 # Mock session
 TOKEN = dcpim.guid()
