@@ -1,5 +1,6 @@
 """Run tests for DCPIM media."""
 
+import json
 import dcpim
 
 
@@ -17,14 +18,14 @@ print(dcpim.db_get(TABLE))
 
 # Run tests
 status = 0
-result = eval(dcpim.curl("http://127.0.0.1/library", data={'token': TOKEN}))
+result = json.loads(dcpim.curl("http://127.0.0.1/library", data={'token': TOKEN}))
 print(result)
-if result['status'] == 1:
-  status = 1
+if result['status'] != 0:
+	status = result['status']
 
 
 # Evaluate status and delete session
 dcpim.db_delete(TABLE)
 print("Tests done.")
-if result['status'] != 0:
-  quit(1)
+if status != 0:
+	quit(1)
