@@ -26,6 +26,12 @@ jobs:
     - name: Analysing the code with pylint
       run: |
         pylint --indent-string "\t" --disable=broad-except,bare-except,no-else-return,import-outside-toplevel,consider-using-f-string $(git ls-files '*.py')
+    - name: Setup Docker
+      uses: docker-practice/actions-setup-docker@v1
+      with:
+        docker_version: 'latest'
+    - name: Build Docker Image
+      run: docker build -f Dockerfile -t dcpim-media:latest .
     - name: Running tests
       run: |
         python test.py
