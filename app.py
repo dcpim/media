@@ -5,28 +5,27 @@
 
 from flask import Flask, jsonify, request
 import dcpim
-import boto3
 
 app = Flask(__name__)
 
 
-def validate(request):
+def validate(req):
 	""" Check for a valid login token.
- 			@param request: Flask request object.
+ 			@param req: Flask request object.
 	"""
 	output = {
-		status = 1,
-		message = "",
-		data = []
+		'status': 1,
+		'message': "",
+		'data': []
 	}
 
 	# Make sure the token is in the form
-	if "token" not in request.form:
+	if "token" not in req.form:
 		output['message'] = "No login token specified."
 		return output
 
 	# Sanitize token
-	token = dcpim.alphanum(request.form['token'])
+	token = dcpim.alphanum(req.form['token'])
 
 	# Make sure the session exists for that token
 	try:
@@ -62,16 +61,16 @@ def validate(request):
 def index():
 	""" Default route is unused. """
 	output = {
-		status = 1,
-		message = "No action specified.",
-		data = []
+		'status': 1,
+		'message': "No action specified.",
+		'data': []
 	}
 	return jsonify(output)
 
 
-@app.route('/list', methods=['GET', 'POST'])
-def list():
-	""" list - Lists the items in a user's music library.
+@app.route('/library', methods=['GET', 'POST'])
+def library():
+	""" library - Lists the items in a user's music library.
  			@param token: Valid logged in token
  	"""
 	output = validate(request)
