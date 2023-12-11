@@ -15,9 +15,9 @@ def validate(request):
  			@param request: Flask request object.
 	"""
 	output = {
-		status = 1,
-		message = "",
-		data = []
+		status: 1,
+		message: "",
+		data: []
 	}
 
 	# Make sure the token is in the form
