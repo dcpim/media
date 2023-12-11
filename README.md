@@ -8,15 +8,15 @@ This is the media manager for DCPIM. It includes the following features:
 * Import files from external streaming source (ie. YouTube) as video or audio.
 
 
-# Authors
+## Authors
 
 This code was created by:
 Patrick Lambert <patrick@dendory.ca>
 
 
-# License
+## License
 
-Copyright 2023, Patrick Lambert
+Copyright 2018-2024, Patrick Lambert
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
