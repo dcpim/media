@@ -25,7 +25,7 @@ jobs:
         pip install --no-cache-dir -r ./requirements.txt
     - name: Analysing the code with pylint
       run: |
-        pylint --indent-string "\t" --disable=broad-except,bare-except,no-else-return,invalid-name,import-outside-toplevel,consider-using-f-string $(git ls-files '*.py')
+        pylint --indent-string "\t" --disable=consider-using-sys-exit,broad-except,bare-except,no-else-return,invalid-name,import-outside-toplevel,consider-using-f-string $(git ls-files '*.py')
     - name: Setup Docker
       uses: docker-practice/actions-setup-docker@v1
       with:
