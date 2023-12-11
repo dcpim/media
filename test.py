@@ -6,7 +6,7 @@ import dcpim
 
 # Mock session
 token = dcpim.guid()
-table = "dcpim.sessions.{}".format(TOKEN)
+table = "dcpim.sessions.{}".format(token)
 dcpim.db_create(table)
 dcpim.db_put(table, "valid_until", "2038-01-01 12:00:00")
 dcpim.db_put(table, "from_ip", "172.17.0.1")
