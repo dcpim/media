@@ -21,7 +21,8 @@ jobs:
     - name: Installing dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pylint setuptools boto3 dcpim flask
+        pip install pylint setuptools
+        pip install --no-cache-dir -r ./requirements.txt
     - name: Analysing the code with pylint
       run: |
         pylint --indent-string "\t" --disable=broad-except,bare-except,no-else-return,import-outside-toplevel,consider-using-f-string $(git ls-files '*.py')
