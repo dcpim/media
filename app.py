@@ -9,10 +9,8 @@ import dcpim
 app = Flask(__name__)
 
 
-def validate(req):
-	""" Check for a valid login token.
- 			@param req: Flask request object.
-	"""
+def validate():
+	""" Check for a valid login token. """
 	output = {
 		'status': 1,
 		'message': "",
@@ -20,12 +18,12 @@ def validate(req):
 	}
 
 	# Make sure the token is in the form
-	if "token" not in req.form:
+	if "token" not in request.form:
 		output['message'] = "No login token specified."
 		return output
 
 	# Sanitize token
-	token = dcpim.alphanum(req.form['token'])
+	token = dcpim.alphanum(request.form['token'])
 
 	# Make sure the session exists for that token
 	try:
@@ -73,7 +71,7 @@ def library():
 	""" library - Lists the items in a user's music library.
  			@param token: Valid logged in token
  	"""
-	output = validate(request)
+	output = validate()
 	if output['status'] == 1:
 		return jsonify(output)
 
