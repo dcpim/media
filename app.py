@@ -62,9 +62,9 @@ def validate(request):
 def index():
 	""" Default route is unused. """
 	output = {
-		status = 1,
-		message = "No action specified.",
-		data = []
+		status: 1,
+		message: "No action specified.",
+		data: []
 	}
 	return jsonify(output)
 
