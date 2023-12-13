@@ -3,11 +3,11 @@
 	Patrick Lambert - http://dendory.net - Provided under the MIT License
 """
 
+import os
 from flask import Flask, jsonify, request
 import dcpim
 
 app = Flask(__name__)
-
 
 def validate():
 	""" Check for a valid login token. """
@@ -66,16 +66,89 @@ def index():
 	return jsonify(output)
 
 
-@app.route('/library', methods=['GET', 'POST'])
-def library():
-	""" library - Lists the items in a user's music library.
+@app.route('/initialize', methods=['GET', 'POST'])
+def initialize():
+	""" initialize - Initialize basic settings for a user.
  			@param token: Valid logged in token
  	"""
 	output = validate()
 	if output['status'] == 1:
 		return jsonify(output)
 
+	token = dcpim.alphanum(request.form['token'])
+	env = os.environ['DCPIM_ENV']
+
+	try:
+		dcpim.db_create("dcpim.{}.media.settings".format(env))
+		output['data'].append("Settings created.")
+	except:
+		output['data'].append("Settings already existed.")
+
+	data = {
+		'username': username,
+		'storage_location': storage_loc,
+		'storage_type': "S3"
+	}
+	dcpim.db_put("dcpim.{}.media.settings".format(env), token, str(data))
+
+	try:
+		dcpim.db_create("dcpim.{}.media.music.{}".format(env, token))
+		output['data'].append("Music library created.")
+	except:
+		output['data'].append("Music library already existed.")
+
+	try:
+		dcpim.db_create("dcpim.{}.media.videos.{}".format(env, token))
+		output['data'].append("Video library created.")
+	except:
+		output['data'].append("Video library already existed.")
+
 	output['message'] = "Success."
+	
+	return jsonify(output)
+
+
+@app.route('/music', methods=['GET', 'POST'])
+def music():
+	""" music - Lists the items in a user's music library.
+ 			@param token: Valid logged in token
+ 	"""
+	output = validate()
+	if output['status'] == 1:
+		return jsonify(output)
+
+	token = dcpim.alphanum(request.form['token'])
+	env = os.environ['DCPIM_ENV']
+
+	try:
+		output['data'] = dcpim.db_get("dcpim.{}.media.music.{}".format(env, token))
+		output['message'] = "Success."
+	except:
+		output['status'] = 1
+		output['message'] = "User library has not been initialized."
+	
+	return jsonify(output)
+
+
+@app.route('/videos', methods=['GET', 'POST'])
+def videos():
+	""" videos - Lists the items in a user's video library.
+ 			@param token: Valid logged in token
+ 	"""
+	output = validate()
+	if output['status'] == 1:
+		return jsonify(output)
+
+	token = dcpim.alphanum(request.form['token'])
+	env = os.environ['DCPIM_ENV']
+
+	try:
+		output['data'] = dcpim.db_get("dcpim.{}.media.videos.{}".format(env, token))
+		output['message'] = "Success."
+	except:
+		output['status'] = 1
+		output['message'] = "User library has not been initialized."
+	
 	return jsonify(output)
 
 
