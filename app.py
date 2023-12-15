@@ -93,7 +93,7 @@ def initialize():
 		output['data'].append("Video library already existed.")
 
 	output['message'] = "Success."
-	
+
 	return jsonify(output)
 
 
@@ -115,7 +115,7 @@ def music():
 	except:
 		output['status'] = 1
 		output['message'] = "User library has not been initialized."
-	
+
 	return jsonify(output)
 
 
@@ -137,7 +137,7 @@ def videos():
 	except:
 		output['status'] = 1
 		output['message'] = "User library has not been initialized."
-	
+
 	return jsonify(output)
 
 
