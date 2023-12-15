@@ -24,6 +24,9 @@ print(dcpim.db_get(table, token))
 
 
 # Run tests
+result = json.loads(dcpim.curl("http://127.0.0.1/videos", data={'token': "12345"}))
+print(result)
+assert result['status'] == 1
 result = json.loads(dcpim.curl("http://127.0.0.1/initialize", data={'token': token}))
 print(result)
 assert result['status'] == 0
