@@ -29,7 +29,9 @@ def validate():
 	# Make sure the session exists for that token
 	try:
 		session = json.loads(dcpim.db_get(
-			"dcpim.sessions",
+			"dcpim.{}.sessions".format(
+				os.environ['DCPIM_ENV']
+			),
 			token
 		))
 		valid_until = session['valid_until']
