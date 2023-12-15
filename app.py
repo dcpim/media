@@ -4,6 +4,7 @@
 """
 
 import os
+import json
 from flask import Flask, jsonify, request
 import dcpim
 
@@ -27,32 +28,30 @@ def validate():
 
 	# Make sure the session exists for that token
 	try:
-		valid_until = dcpim.db_get(
-			"dcpim.sessions.{}".format(token),
-			"valid_until"
-		)
-		from_ip = dcpim.db_get(
-			"dcpim.sessions.{}".format(token),
-			"from_ip"
-		)
-	except:
-		output['message'] = "Invalid login token."
-		return output
+		session = json.loads(dcpim.db_get(
+			"dcpim.sessions",
+			token
+		))
+		valid_until = session['valid_until']
+		from_ip = session['from_ip']
+	except Exception as err:
+		output['message'] = "Invalid login token: {}".format(err)
+		return output, None
 
 	# Make sure session isn't expired
 	if dcpim.days_since(valid_until) > 0:
 		output['message'] = "Login token expired on {}." \
 		.format(valid_until)
-		return output
+		return output, None
 
 	# Make sure the session IP is valid
 	if from_ip != request.remote_addr:
 		output['message'] = "Login token is not valid from {}." \
 		.format(request.remote_addr)
-		return output
+		return output, None
 
 	output['status'] = 0
-	return output
+	return output, session
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -71,34 +70,27 @@ def initialize():
 	""" initialize - Initialize basic settings for a user.
  			@param token: Valid logged in token
  	"""
-	output = validate()
+	(output, session) = validate()
 	if output['status'] == 1:
 		return jsonify(output)
 
 	token = dcpim.alphanum(request.form['token'])
-	env = os.environ['DCPIM_ENV']
+	env = 
 
 	try:
-		dcpim.db_create("dcpim.{}.media.settings".format(env))
-		output['data'].append("Settings created.")
-	except:
-		output['data'].append("Settings already existed.")
-
-	data = {
-		'username': username,
-		'storage_location': storage_loc,
-		'storage_type': "S3"
-	}
-	dcpim.db_put("dcpim.{}.media.settings".format(env), token, str(data))
-
-	try:
-		dcpim.db_create("dcpim.{}.media.music.{}".format(env, token))
+		dcpim.db_create("dcpim.{}.media.music.{}".format(
+			os.environ['DCPIM_ENV'],
+			session['username']
+		))
 		output['data'].append("Music library created.")
 	except:
 		output['data'].append("Music library already existed.")
 
 	try:
-		dcpim.db_create("dcpim.{}.media.videos.{}".format(env, token))
+		dcpim.db_create("dcpim.{}.media.videos.{}".format(
+			os.environ['DCPIM_ENV'],
+			session['username']
+		))
 		output['data'].append("Video library created.")
 	except:
 		output['data'].append("Video library already existed.")
@@ -113,15 +105,15 @@ def music():
 	""" music - Lists the items in a user's music library.
  			@param token: Valid logged in token
  	"""
-	output = validate()
+	(output, session) = validate()
 	if output['status'] == 1:
 		return jsonify(output)
 
-	token = dcpim.alphanum(request.form['token'])
-	env = os.environ['DCPIM_ENV']
-
 	try:
-		output['data'] = dcpim.db_get("dcpim.{}.media.music.{}".format(env, token))
+		output['data'] = dcpim.db_get("dcpim.{}.media.music.{}".format(
+			os.environ['DCPIM_ENV'],
+			session['username']
+		))
 		output['message'] = "Success."
 	except:
 		output['status'] = 1
@@ -135,15 +127,15 @@ def videos():
 	""" videos - Lists the items in a user's video library.
  			@param token: Valid logged in token
  	"""
-	output = validate()
+	(output, session) = validate()
 	if output['status'] == 1:
 		return jsonify(output)
 
-	token = dcpim.alphanum(request.form['token'])
-	env = os.environ['DCPIM_ENV']
-
 	try:
-		output['data'] = dcpim.db_get("dcpim.{}.media.videos.{}".format(env, token))
+		output['data'] = dcpim.db_get("dcpim.{}.media.videos.{}".format(
+			os.environ['DCPIM_ENV'],
+			session['username']
+		))
 		output['message'] = "Success."
 	except:
 		output['status'] = 1
