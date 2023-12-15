@@ -74,9 +74,6 @@ def initialize():
 	if output['status'] == 1:
 		return jsonify(output)
 
-	token = dcpim.alphanum(request.form['token'])
-	env = 
-
 	try:
 		dcpim.db_create("dcpim.{}.media.music.{}".format(
 			os.environ['DCPIM_ENV'],
