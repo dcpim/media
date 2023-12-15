@@ -33,11 +33,11 @@ def validate():
 				os.environ['DCPIM_ENV']
 			),
 			token
-		))
+		).replace("'",'"'))
 		valid_until = session['valid_until']
 		from_ip = session['from_ip']
-	except Exception as err:
-		output['message'] = "Invalid login token: {}".format(err)
+	except:
+		output['message'] = "Invalid login token."
 		return output, None
 
 	# Make sure session isn't expired
