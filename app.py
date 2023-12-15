@@ -1,6 +1,6 @@
 """ DCPIM is a general purpose Python 3.x library that contains a lot of
-	commonly done operations inside of a single package. (C) 2018-2024
-	Patrick Lambert - http://dendory.net - Provided under the MIT License
+	commonly done operations inside of a single package.
+	(C) 2018-2024 Patrick Lambert - Provided under the MIT License
 """
 
 import os
@@ -56,12 +56,13 @@ def validate():
 	return output, session
 
 
-@app.route('/', methods=['GET', 'POST'])
-def index():
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def catch_all(path):
 	""" Default route is unused. """
 	output = {
 		'status': 1,
-		'message': "No action specified.",
+		'message': "Invalid action specified.",
 		'data': []
 	}
 	return jsonify(output)
@@ -99,9 +100,9 @@ def initialize():
 	return jsonify(output)
 
 
-@app.route('/music', methods=['GET', 'POST'])
-def music():
-	""" music - Lists the items in a user's music library.
+@app.route('/music/list', methods=['GET', 'POST'])
+def music_list():
+	""" music/list - Lists the items in a user's music library.
  			@param token: Valid logged in token
  	"""
 	(output, session) = validate()
@@ -121,9 +122,96 @@ def music():
 	return jsonify(output)
 
 
-@app.route('/videos', methods=['GET', 'POST'])
-def videos():
-	""" videos - Lists the items in a user's video library.
+@app.route('/music/add', methods=['GET', 'POST'])
+def music_add():
+	""" music/add - Add a music to the library.
+ 			@param token: Valid logged in token
+    			@source string: The source type
+       			@url string: The source URL
+	  		@name string: The name of the song
+ 	"""
+	(output, session) = validate()
+	if output['status'] == 1:
+		return jsonify(output)
+
+	# Make sure all parameters are in the request
+	if 'source' not in request.form or 'url' not in request.form or \
+	'name' not in request.form:
+		output['status'] = 1
+		output['message'] = "Form must include: source, url, name."
+		return jsonify(output)
+
+	# Setup variables for bucket, name of music and filename
+	bucket = "s3://dcpim-media-{}/".format(
+		os.environ['DCPIM_ENV']
+	)
+	name = dcpim.alphanum(
+		request.form['name'],
+		symbols=True,
+		spaces=True
+	)
+	filename = "{}.mp3".format(dcpim.guid())
+	prefix = "{}/{}".format(
+		session['username'],
+		filename
+	)
+
+	# Download music from URL
+	if str(request.form['source']).lower() == "url":
+		try:
+			size = dcpim.download(request.form['url'], filename)
+		except Exception as err:
+			output['status'] = 1
+			output['message'] = "Download failed: {}".format(err)
+			return jsonify(output)
+
+	# Download music from YouTube
+	elif str(request.form['source']).lower() == "youtube":
+		output['status'] = 1
+		output['message'] = "Not implemented."
+		return jsonify(output)
+
+	# Invalid source type
+	else:
+		output['status'] = 1
+		output['message'] = "Source type must be one of: url, youtube"
+		return jsonify(output)
+
+	# Upload music to S3
+	s3 = boto3.client('s3')
+	try:
+		response = s3.upload_file(
+			filename,
+			bucket,
+			prefix
+		)
+	except Exception as err:
+		output['status'] = 1
+		output['message'] = "Upload failed: {}".format(err)
+		return jsonify(output)
+
+	# Set data to add to library and add to DB
+	data = {
+		'filename': prefix,
+		'size': size
+	}
+	dcpim.db_put(
+		"dcpim.{}.media.videos.{}".format(
+			os.environ['DCPIM_ENV'],
+			session['username']
+		),
+		name,
+		data
+	)
+	output['data'].append(data)
+	output['message'] = "Success"
+
+	return jsonify(output)
+
+
+@app.route('/videos/list', methods=['GET', 'POST'])
+def videos_list():
+	""" videos/list - Lists the items in a user's video library.
  			@param token: Valid logged in token
  	"""
 	(output, session) = validate()
